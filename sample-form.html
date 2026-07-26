@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>お問い合わせ | サンプルフォーム</title>
+
+<!--
+  ==============================================================================
+   sample-form.html
+  ------------------------------------------------------------------------------
+   ・このHTMLファイルはそのまま自分のサイトに置いて使えるサンプルです。
+   ・<form> の action="mail-system.php" の部分はそのままにしてください。
+     (同じフォルダに mail-system.php を置いてください)
+   ・項目を増やしたい場合は、下の <div class="form-row"> のかたまりを
+     コピー&ペーストして、name属性を変えるだけでOKです。
+     PHP側は何も編集する必要はありません。
+   ・必須にしたい項目は、
+       1. input/textarea/select に required を付ける (ブラウザ側のチェック)
+       2. 下の方にある <input type="hidden" name="_required" value="..."> の
+          value に、その項目のname属性をカンマ区切りで追加する (サーバー側のチェック)
+     の両方をしておくと安全です。
+  ==============================================================================
+-->
+
+<style>
+  /* ================================================================
+     ここからフォームのオリジナルCSSです。自由に編集してください。
+     ================================================================ */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f5f6f8;
+    font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    color: #333;
+    line-height: 1.7;
+  }
+  .form-page-title {
+    text-align: center;
+    font-size: 24px;
+    padding: 32px 16px 0;
+    margin: 0;
+    color: #222;
+  }
+  .form-container {
+    max-width: 640px;
+    margin: 24px auto 80px;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .form-lead {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 28px;
+  }
+  .form-row {
+    margin-bottom: 24px;
+  }
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .form-required {
+    font-size: 11px;
+    color: #fff;
+    background: #d9534f;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: normal;
+  }
+  .form-optional {
+    font-size: 11px;
+    color: #666;
+    background: #e9e9e9;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-weight: normal;
+  }
+  .form-input,
+  .form-textarea,
+  .form-select {
+    width: 100%;
+    padding: 11px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    background: #fff;
+  }
+  .form-input:focus,
+  .form-textarea:focus,
+  .form-select:focus {
+    outline: none;
+    border-color: #3aa76d;
+  }
+  .form-textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+  .form-radio-group,
+  .form-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .form-radio-item,
+  .form-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+  }
+  .form-radio-item input,
+  .form-checkbox-item input {
+    width: 16px;
+    height: 16px;
+  }
+  .form-submit-wrap {
+    text-align: center;
+    margin-top: 32px;
+  }
+  .form-submit-btn {
+    display: inline-block;
+    padding: 14px 56px;
+    font-size: 16px;
+    color: #fff;
+    background: #3aa76d;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .form-submit-btn:hover {
+    opacity: 0.85;
+  }
+  /* ハニーポット(人には見せない項目)。ボット対策なので削除しないでください */
+  .form-honeypot {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+  }
+  @media (max-width: 600px) {
+    .form-container {
+      margin: 16px 12px 60px;
+      padding: 22px 18px;
+    }
+    .form-page-title {
+      font-size: 20px;
+    }
+    .form-submit-btn {
+      width: 100%;
+    }
+  }
+  /* ================================================================
+     ここまでフォームのオリジナルCSS
+     ================================================================ */
+</style>
+</head>
+<body>
+
+<h1 class="form-page-title">お問い合わせ</h1>
+
+<div class="form-container">
+  <p class="form-lead">
+    下記フォームに必要事項をご入力の上、送信ボタンを押してください。<br>
+    <span style="color:#d9534f;">必須</span>と表示されている項目は必ずご入力ください。
+  </p>
+
+  <form method="post" action="mail-system.php">
+
+    <!-- ① お名前 (input / label タグの例・必須) -->
+    <div class="form-row">
+      <label class="form-label" for="f-name">
+        お名前
+        <span class="form-required">必須</span>
+      </label>
+      <input class="form-input" type="text" id="f-name" name="お名前" placeholder="例: 田中 太郎" required>
+    </div>
+
+    <!-- ② メールアドレス (input type=email の例・必須) -->
+    <div class="form-row">
+      <label class="form-label" for="f-email">
+        メールアドレス
+        <span class="form-required">必須</span>
+      </label>
+      <input class="form-input" type="email" id="f-email" name="メールアドレス" placeholder="例: sample@example.com" required>
+    </div>
+
+    <!-- ③ お問い合わせ種別 (radio ボタンの例・任意項目) -->
+    <div class="form-row">
+      <span class="form-label">
+        お問い合わせ種別
+        <span class="form-optional">任意</span>
+      </span>
+      <div class="form-radio-group">
+        <label class="form-radio-item">
+          <input type="radio" name="お問い合わせ種別" value="サービスについて" checked>サービスについて
+        </label>
+        <label class="form-radio-item">
+          <input type="radio" name="お問い合わせ種別" value="お見積もり">お見積もり
+        </label>
+        <label class="form-radio-item">
+          <input type="radio" name="お問い合わせ種別" value="その他">その他
+        </label>
+      </div>
+    </div>
+
+    <!-- ④ ご希望の連絡方法 (select / option タグの例・任意項目) -->
+    <div class="form-row">
+      <label class="form-label" for="f-contact">
+        ご希望の連絡方法
+        <span class="form-optional">任意</span>
+      </label>
+      <select class="form-select" id="f-contact" name="ご希望の連絡方法">
+        <option value="メール" selected>メール</option>
+        <option value="電話">電話</option>
+        <option value="どちらでも可">どちらでも可</option>
+      </select>
+    </div>
+
+    <!-- ⑤ チェック (checkbox の例・必須) -->
+    <div class="form-row">
+      <span class="form-label">
+        確認事項
+        <span class="form-required">必須</span>
+      </span>
+      <div class="form-checkbox-group">
+        <label class="form-checkbox-item">
+          <input type="checkbox" name="チェック" value="1" required>プライバシーポリシーに同意する
+        </label>
+      </div>
+    </div>
+
+    <!-- ⑥ お問い合わせ内容 (textarea タグの例・長文・必須) -->
+    <div class="form-row">
+      <label class="form-label" for="f-message">
+        お問い合わせ内容
+        <span class="form-required">必須</span>
+      </label>
+      <textarea class="form-textarea" id="f-message" name="お問い合わせ内容" placeholder="お問い合わせ内容をご記入ください" required></textarea>
+    </div>
+
+    <!-- ==========================================================
+         スパム対策(CAPTCHA)
+         reCAPTCHA / hCaptcha / Cloudflare Turnstile のうち、
+         使いたいものの「サイトキー」を1箇所書き込んで、
+         コメント(<!-- -->)を外すだけで設置できます。
+         mail-system.php 側の対応する secret key も設定してください。
+         3つとも使わない場合は、このブロックごと削除してもかまいません。
+         ========================================================== -->
+    <div class="form-row" style="text-align:center;">
+
+      <!-- ▼ reCAPTCHA を使う場合は、下の2行のコメントを外してサイトキーを入力
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <div class="g-recaptcha" data-sitekey="ここにreCAPTCHAのサイトキーを入力"></div>
+      -->
+
+      <!-- ▼ hCaptcha を使う場合は、下の2行のコメントを外してサイトキーを入力
+      <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+      <div class="h-captcha" data-sitekey="ここにhCaptchaのサイトキーを入力"></div>
+      -->
+
+      <!-- ▼ Cloudflare Turnstile を使う場合は、下の2行のコメントを外してサイトキーを入力
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      <div class="cf-turnstile" data-sitekey="ここにTurnstileのサイトキーを入力"></div>
+      -->
+
+    </div>
+
+    <!-- ==========================================================
+         システム用の隠し項目(削除しないでください)
+         ========================================================== -->
+
+    <!-- 必須項目の一覧。カンマ区切りで name属性を指定します -->
+    <input type="hidden" name="_required" value="お名前,メールアドレス,チェック,お問い合わせ内容">
+
+    <!-- ハニーポット(人には見えない項目)。ボット対策用なので空のままにしてください -->
+    <div class="form-honeypot" aria-hidden="true">
+      <label for="f-hp">この項目は入力しないでください</label>
+      <input type="text" id="f-hp" name="_honeypot" tabindex="-1" autocomplete="off">
+    </div>
+
+    <!-- 送信ボタン (button タグの例) -->
+    <div class="form-submit-wrap">
+      <button class="form-submit-btn" type="submit">送信する</button>
+    </div>
+
+  </form>
+</div>
+
+</body>
+</html>
